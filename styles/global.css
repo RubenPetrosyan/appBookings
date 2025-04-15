@@ -1,0 +1,93 @@
+/* styles/global.css */
+
+/* Reset some default browser styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Base body styles */
+body {
+  font-family: 'Roboto', sans-serif;
+  background: #f4f4f4;
+  color: #333;
+  line-height: 1.6;
+}
+
+/* Container for the app content */
+.container {
+  max-width: 420px;
+  margin: 40px auto;
+  padding: 30px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Heading styles */
+h1 {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #2575fc;
+  font-weight: 500;
+}
+
+/* Styling form groups */
+.form-group {
+  margin-bottom: 20px;
+}
+
+/* Label styling */
+label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: #555;
+}
+
+/* Input and select element styling */
+input, 
+select {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+input:focus, 
+select:focus {
+  border-color: #2575fc;
+}
+
+/* Button styling */
+button {
+  width: 100%;
+  padding: 12px;
+  background: #2575fc;
+  border: none;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+}
+
+button:hover {
+  background: #1a5bb8;
+  transform: translateY(-2px);
+}
+
+/* Modal styling */
+.modal {
+  margin-top: 20px;
+  padding: 20px;
+  background: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  text-align: center;
+}
