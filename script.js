@@ -6,8 +6,8 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-// Set your backend endpoint to the provided Google Apps Script URL
-const backendEndpoint = "https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLhQ5rOil2KTzrMYHN6UGyL0RO61gbUdw9XHntcHLAy_Awd6fw_z2EDSXWQqIaW0s9AkOo07zEMzDp2J8aIMnos4QAf3qwkPhsDco-IVpcrgW28uKGYTUEZOkJwKtqWEZnW-M0Qr8RZORs8uiPCQtW4jOXYkrQNf801YLV0Rnp_VqNqjsLOvwmhNI6r_ZSJR9aStkpbIjJ7PC_2Dx51y586Vw8avjiKyQgImDhpGpVm2asYPCQOWC7-nuFvBc5tCcODRpCZekrW6EFeLkIsOnoxR5KDHMQ&lib=MkcaSUY_jdmyfyWY1SQgSYPDp8aFBtR4M";
+// Set the backend endpoint to your deployed web app URL (no extra parameters)
+const backendEndpoint = "https://script.google.com/macros/s/AKfycbx28_qruAfMTfnJMig7bJCLRiyP1FcdUcVTcH25fj1gWUMLg83XdN7yHYKiIdFoA-pD/exec";
 
 // Get DOM elements
 const form = document.getElementById('appointment-form');
@@ -30,15 +30,15 @@ form.addEventListener('submit', function(event) {
     time_slot: document.getElementById('time-slot').value
   };
 
-  // Send appointment data to the backend using fetch with no-cors mode
+  // Send appointment data to the backend using fetch
   fetch(backendEndpoint, {
     method: 'POST',
-    mode: 'no-cors', // Note: This makes the response opaque (you won't be able to read its content)
+    mode: 'no-cors', // Using 'no-cors' gives an opaque response
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(formData)
   })
   .then(response => {
-    // In no-cors mode, the response is opaque, so we assume submission worked
+    // In 'no-cors' mode, the response is opaque, so we assume success on submission
     console.log("Appointment submitted (opaque response).");
     loader.classList.remove('active');
     successModal.classList.add('active');
@@ -56,19 +56,16 @@ closeModalBtn.addEventListener('click', function() {
   successModal.classList.remove('active');
 });
 
-// Special Effect: Particle effect on mouse move
+// Special Effect: Particle effect following the mouse pointer
 document.addEventListener('mousemove', function(e) {
-  // Create a particle element
   const particle = document.createElement('div');
   particle.classList.add('particle');
-  // Center the particle around the cursor
+  // Center the particle around the mouse pointer
   particle.style.left = (e.pageX - 5) + 'px';
   particle.style.top = (e.pageY - 5) + 'px';
   
-  // Append particle to the document body
+  // Append particle element and remove it after 800ms when the animation is done
   document.body.appendChild(particle);
-  
-  // Remove particle after the animation completes (800ms)
   setTimeout(() => {
     particle.remove();
   }, 800);
