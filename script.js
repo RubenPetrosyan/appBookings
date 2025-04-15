@@ -30,16 +30,19 @@ form.addEventListener('submit', function(event) {
     time_slot: document.getElementById('time-slot').value
   };
 
-  // Send appointment data to the backend using fetch
+  // Send appointment data to the backend using fetch in default 'cors' mode
   fetch(backendEndpoint, {
     method: 'POST',
-    mode: 'no-cors', // Using 'no-cors' gives an opaque response
+    // mode is omitted so default CORS mode is used
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(formData)
   })
   .then(response => {
-    // In 'no-cors' mode, the response is opaque, so we assume success on submission
-    console.log("Appointment submitted (opaque response).");
+    // Attempt to parse response JSON
+    return response.json();
+  })
+  .then(data => {
+    console.log("Response:", data);
     loader.classList.remove('active');
     successModal.classList.add('active');
     form.reset();
@@ -64,7 +67,7 @@ document.addEventListener('mousemove', function(e) {
   particle.style.left = (e.pageX - 5) + 'px';
   particle.style.top = (e.pageY - 5) + 'px';
   
-  // Append particle element and remove it after 800ms when the animation is done
+  // Append particle element and remove it after 800ms when its CSS animation is done
   document.body.appendChild(particle);
   setTimeout(() => {
     particle.remove();
