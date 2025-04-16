@@ -1,5 +1,4 @@
 // pages/api/appointments.js
-
 import { GoogleSpreadsheet } from 'google-spreadsheet';
 
 // Load credentials from Vercel Environment Variable
@@ -22,9 +21,14 @@ export default async function handler(req, res) {
   try {
     // Connect to the sheet
     const doc = new GoogleSpreadsheet(SPREADSHEET_ID);
-    await doc.useServiceAccountAuth(SERVICE_ACCOUNT_CREDS);
-    await doc.loadInfo(); // loads document properties
 
+    // Use parsed credentials correctly (for v4+)
+    await doc.useServiceAccountAuth({
+      client_email: SERVICE_ACCOUNT_CREDS.client_email,
+      private_key: SERVICE_ACCOUNT_CREDS.private_key,
+    });
+
+    await doc.loadInfo(); // loads document properties
     const sheet = doc.sheetsByTitle['Sheet1'];
 
     if (!sheet) {
