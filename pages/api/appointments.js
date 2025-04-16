@@ -1,10 +1,6 @@
-// pages/api/appointments.js
 import { GoogleSpreadsheet } from 'google-spreadsheet';
 
-// Load credentials from Vercel Environment Variable
 const SERVICE_ACCOUNT_CREDS = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON);
-
-// Your spreadsheet ID
 const SPREADSHEET_ID = '1OOIUl8LYO0V8SxMjAyztiTbtxirIhS5ImwsAf_6Nc';
 
 export default async function handler(req, res) {
@@ -19,26 +15,28 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Connect to the sheet
+    console.log('Connecting to Google Sheet...');
     const doc = new GoogleSpreadsheet(SPREADSHEET_ID);
 
-    // Authenticate with Google Service Account credentials
+    console.log('Authenticating...');
     await doc.useServiceAccountAuth({
       client_email: SERVICE_ACCOUNT_CREDS.client_email,
       private_key: SERVICE_ACCOUNT_CREDS.private_key.replace(/\\n/g, '\n'),
     });
 
-    await doc.loadInfo(); // loads document properties
-    const sheet = doc.sheetsByTitle['Sheet1'];
+    console.log('Loading document info...');
+    await doc.loadInfo();
 
+    const sheet = doc.sheetsByTitle['Sheet1'];
     if (!sheet) {
+      console.error('Sheet1 not found');
       return res.status(500).json({ status: 'error', message: 'Sheet1 not found' });
     }
 
-    // Prepare new row data
     const appointmentId = `APPT-${Date.now()}`;
     const timestamp = new Date().toISOString();
 
+    console.log('Adding row...');
     await sheet.addRow({
       'Appointment ID': appointmentId,
       'Name': name,
@@ -49,6 +47,7 @@ export default async function handler(req, res) {
       'Timestamp': timestamp,
     });
 
+    console.log('Appointment added:', appointmentId);
     return res.status(200).json({ status: 'success', appointmentId });
   } catch (error) {
     console.error('Google Sheets Error:', error);
