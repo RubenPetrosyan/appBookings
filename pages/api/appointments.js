@@ -22,10 +22,10 @@ export default async function handler(req, res) {
     // Connect to the sheet
     const doc = new GoogleSpreadsheet(SPREADSHEET_ID);
 
-    // Use parsed credentials correctly (for v4+)
+    // Authenticate with Google Service Account credentials
     await doc.useServiceAccountAuth({
       client_email: SERVICE_ACCOUNT_CREDS.client_email,
-      private_key: SERVICE_ACCOUNT_CREDS.private_key,
+      private_key: SERVICE_ACCOUNT_CREDS.private_key.replace(/\\n/g, '\n'),
     });
 
     await doc.loadInfo(); // loads document properties
@@ -35,7 +35,7 @@ export default async function handler(req, res) {
       return res.status(500).json({ status: 'error', message: 'Sheet1 not found' });
     }
 
-    // Prepare row
+    // Prepare new row data
     const appointmentId = `APPT-${Date.now()}`;
     const timestamp = new Date().toISOString();
 
