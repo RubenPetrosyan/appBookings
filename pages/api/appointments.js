@@ -1,3 +1,4 @@
+// pages/api/appointments.js
 import { google } from 'googleapis';
 
 export default async function handler(req, res) {
@@ -11,11 +12,16 @@ export default async function handler(req, res) {
     return res.status(400).json({ status: 'error', message: 'Missing required fields' });
   }
 
-  // Load credentials from environment
+  // Decode base64 credentials from env
   let credentials;
   try {
-    credentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_CREDENTIALS);
+    const base64 = process.env.GOOGLE_SERVICE_ACCOUNT_CREDENTIALS_BASE64;
+    if (!base64) throw new Error('Missing base64 credentials');
+
+    const jsonString = Buffer.from(base64, 'base64').toString('utf-8');
+    credentials = JSON.parse(jsonString);
   } catch (err) {
+    console.error('Failed to decode credentials:', err.message);
     return res.status(500).json({ status: 'error', message: 'Invalid credentials format' });
   }
 
@@ -27,10 +33,9 @@ export default async function handler(req, res) {
   try {
     const sheets = google.sheets({ version: 'v4', auth: await auth.getClient() });
 
-    const spreadsheetId = '1OOIUl8LYO0V8SxMjAyztiTbtxirIhS5ImwsAf_6Nc'; // your real sheet ID
+    const spreadsheetId = '1OOIUl8LYO0V8SxMjAyztiTbtxirIhS5ImwsAf_6Nc'; // your actual Sheet ID
     const sheetName = 'Sheet1';
 
-    // Generate appointment ID and timestamp
     const appointmentId = `APPT-${Date.now()}`;
     const timestamp = new Date().toISOString();
 
