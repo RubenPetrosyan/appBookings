@@ -17,6 +17,9 @@ export default async function handler(req, res) {
     const base64 = process.env.GOOGLE_SERVICE_ACCOUNT_CREDENTIALS_BASE64;
     if (!base64) throw new Error('Missing base64 credentials');
 
+    // Debug: log the base64 string to see if it is correct
+    console.log("Base64 credentials received:", base64);
+
     const jsonString = Buffer.from(base64, 'base64').toString('utf-8');
     credentials = JSON.parse(jsonString);
   } catch (err) {
