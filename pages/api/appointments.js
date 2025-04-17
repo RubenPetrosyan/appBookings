@@ -1,68 +1,46 @@
 import { google } from 'googleapis';
 
+// API route to handle appointments
 export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ status: 'error', message: 'Method not allowed' });
-  }
+  if (req.method === 'POST') {
+    try {
+      // 1. Parse the credentials from the environment variable
+      const credentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_CREDENTIALS);
 
-  // Parse request body
-  const { name, email, appointment_date, time_slot } = req.body;
-  if (!name || !email || !appointment_date || !time_slot) {
-    return res.status(400).json({ status: 'error', message: 'Missing required fields' });
-  }
+      // 2. Set up Google Sheets authentication
+      const auth = new google.auth.GoogleAuth({
+        credentials: credentials, // Use the credentials from the environment variable
+        scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+      });
 
-  // Decode base64 credentials from env
-  let credentials;
-  try {
-    const base64 = process.env.GOOGLE_SERVICE_ACCOUNT_CREDENTIALS_BASE64;
-    if (!base64) throw new Error('Missing base64 credentials');
+      const sheets = google.sheets({ version: 'v4', auth });
 
-    // Debug: log the base64 string to see if it is correct
-    console.log("Base64 credentials received:", base64);
+      // 3. Define your spreadsheet ID and range
+      const spreadsheetId = '1OOIUl8B8LYO0V8SxMjAyztiTbtxirIhS5ImwsAf_6Nc'; // Replace with your actual spreadsheet ID
+      const range = 'Sheet1!A:F'; // Adjust the range as needed, for example 'Sheet1!A:F' for columns A-F
 
-    const jsonString = Buffer.from(base64, 'base64').toString('utf-8');
-    credentials = JSON.parse(jsonString);
-  } catch (err) {
-    console.error('Failed to decode credentials:', err.message);
-    return res.status(500).json({ status: 'error', message: 'Invalid credentials format' });
-  }
+      // 4. Get data from the request body
+      const { appointmentId, name, email, appointmentDate, timeSlot, status } = req.body;
 
-  const auth = new google.auth.GoogleAuth({
-    credentials,
-    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-  });
+      // 5. Write the new appointment data to the Google Sheet
+      const response = await sheets.spreadsheets.values.append({
+        spreadsheetId,
+        range,
+        valueInputOption: 'RAW',
+        resource: {
+          values: [[appointmentId, name, email, appointmentDate, timeSlot, status]],
+        },
+      });
 
-  try {
-    const sheets = google.sheets({ version: 'v4', auth: await auth.getClient() });
-
-    const spreadsheetId = '1OOIUl8LYO0V8SxMjAyztiTbtxirIhS5ImwsAf_6Nc'; // Your actual sheet ID
-    const sheetName = 'Sheet1';
-
-    const appointmentId = `APPT-${Date.now()}`;
-    const timestamp = new Date().toISOString();
-
-    const row = [
-      appointmentId,
-      name,
-      email,
-      appointment_date,
-      time_slot,
-      'Pending',
-      timestamp,
-    ];
-
-    await sheets.spreadsheets.values.append({
-      spreadsheetId,
-      range: `${sheetName}!A:G`,
-      valueInputOption: 'USER_ENTERED',
-      requestBody: {
-        values: [row],
-      },
-    });
-
-    return res.status(200).json({ status: 'success', appointmentId });
-  } catch (error) {
-    console.error('Google Sheets Error:', error);
-    return res.status(500).json({ status: 'error', message: error.message });
+      // 6. Return success response
+      res.status(200).json({ status: 'success', message: 'Appointment added successfully', data: response.data });
+    } catch (error) {
+      // Handle errors and respond with an error message
+      console.error('Error adding appointment:', error);
+      res.status(500).json({ status: 'error', message: 'Failed to add appointment', error: error.message });
+    }
+  } else {
+    // Return 405 if method is not POST
+    res.status(405).json({ status: 'error', message: 'Method Not Allowed' });
   }
 }
