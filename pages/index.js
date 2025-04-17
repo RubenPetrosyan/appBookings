@@ -8,22 +8,15 @@ export default function Home() {
     timeSlot: '',
   });
 
-  const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
+  const [message, setMessage] = useState('');
 
-  // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData((prevState) => ({ ...prevState, [name]: value }));
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setErrorMessage('');
-    setSuccessMessage('');
 
     try {
       const response = await fetch('/api/appointments', {
@@ -35,9 +28,10 @@ export default function Home() {
       const result = await response.json();
 
       if (!response.ok) {
-        setErrorMessage(`Error: ${result.message || 'Failed to add appointment'}`);
+        setMessage(`Error: ${result.message}`);
+        console.error('Failed to add appointment', result);
       } else {
-        setSuccessMessage('Appointment added successfully!');
+        setMessage(result.message);
         setFormData({
           name: '',
           email: '',
@@ -46,77 +40,33 @@ export default function Home() {
         });
       }
     } catch (error) {
-      console.error('Error occurred:', error);
-      setErrorMessage('Failed to add appointment due to an error.');
-    } finally {
-      setLoading(false);
+      console.error('API request error:', error);
+      setMessage('An error occurred while processing your request.');
     }
   };
 
   return (
     <div className="container">
-      <h1>Book an Appointment</h1>
-
-      {successMessage && <div className="success">{successMessage}</div>}
-      {errorMessage && <div className="error">{errorMessage}</div>}
-
+      <h1>Book Appointment</h1>
+      {message && <div className="message">{message}</div>}
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label htmlFor="name">Name</label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-          />
+          <label>Name</label>
+          <input type="text" name="name" value={formData.name} onChange={handleChange} required />
         </div>
-
         <div className="form-group">
-          <label htmlFor="email">Email</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
+          <label>Email</label>
+          <input type="email" name="email" value={formData.email} onChange={handleChange} required />
         </div>
-
         <div className="form-group">
-          <label htmlFor="appointmentDate">Appointment Date</label>
-          <input
-            type="date"
-            id="appointmentDate"
-            name="appointmentDate"
-            value={formData.appointmentDate}
-            onChange={handleChange}
-            required
-          />
+          <label>Appointment Date</label>
+          <input type="date" name="appointmentDate" value={formData.appointmentDate} onChange={handleChange} required />
         </div>
-
         <div className="form-group">
-          <label htmlFor="timeSlot">Time Slot</label>
-          <select
-            id="timeSlot"
-            name="timeSlot"
-            value={formData.timeSlot}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Select a time slot</option>
-            <option value="9:00 AM - 10:00 AM">9:00 AM - 10:00 AM</option>
-            <option value="10:00 AM - 11:00 AM">10:00 AM - 11:00 AM</option>
-            <option value="11:00 AM - 12:00 PM">11:00 AM - 12:00 PM</option>
-            {/* Add more time slots as needed */}
-          </select>
+          <label>Time Slot</label>
+          <input type="time" name="timeSlot" value={formData.timeSlot} onChange={handleChange} required />
         </div>
-
-        <button type="submit" disabled={loading}>
-          {loading ? 'Submitting...' : 'Submit'}
-        </button>
+        <button type="submit">Book Appointment</button>
       </form>
     </div>
   );

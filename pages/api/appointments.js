@@ -1,47 +1,40 @@
 import { google } from 'googleapis';
 
+// Handler for the /api/appointments endpoint
 export default async function handler(req, res) {
   if (req.method === 'POST') {
+    const { name, email, appointmentDate, timeSlot } = req.body;
+
     try {
-      // Decode the Base64 encoded Google service account credentials
-      const credentialsBase64 = process.env.GOOGLE_SERVICE_ACCOUNT_CREDENTIALS;
-
-      if (!credentialsBase64) {
-        return res.status(500).json({ error: 'Service account credentials are missing' });
-      }
-
-      const credentialsJSON = JSON.parse(Buffer.from(credentialsBase64, 'base64').toString('utf-8'));
-
-      // Authenticate using the service account credentials
       const auth = new google.auth.GoogleAuth({
-        credentials: credentialsJSON,
+        credentials: JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_CREDENTIALS),
         scopes: ['https://www.googleapis.com/auth/spreadsheets'],
       });
 
       const sheets = google.sheets({ version: 'v4', auth });
 
-      // The rest of your logic for adding an appointment goes here
+      const spreadsheetId = 'your-spreadsheet-id'; // Replace with your actual spreadsheet ID
+      const range = 'Sheet1!A2:D'; // Adjust based on your sheet's layout
 
-      // Example: Write the data to Google Sheets
-      const response = await sheets.spreadsheets.values.append({
-        spreadsheetId: 'your-spreadsheet-id',  // Replace with your spreadsheet ID
-        range: 'Sheet1!A1',  // Adjust range as necessary
+      const resource = {
+        values: [
+          [name, email, appointmentDate, timeSlot],
+        ],
+      };
+
+      await sheets.spreadsheets.values.append({
+        spreadsheetId,
+        range,
         valueInputOption: 'RAW',
-        resource: {
-          values: [
-            ['Some value', 'More values'],
-            // More rows of data as needed
-          ],
-        },
+        resource,
       });
 
-      res.status(200).json({ status: 'success', data: response.data });
+      res.status(200).json({ status: 'success', message: 'Appointment added successfully!' });
     } catch (error) {
-      console.error('Error occurred:', error);
+      console.error('Error while adding appointment:', error);
       res.status(500).json({ status: 'error', message: 'Failed to add appointment', error: error.message });
     }
   } else {
-    // Handle non-POST methods
-    res.status(405).json({ error: 'Method not allowed' });
+    res.status(405).json({ status: 'error', message: 'Method not allowed' });
   }
 }
