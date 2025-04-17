@@ -1,4 +1,3 @@
-// pages/index.js
 import Head from 'next/head'
 import { useState } from 'react';
 
@@ -30,17 +29,20 @@ export default function Home() {
         body: JSON.stringify(formData)
       });
       const result = await response.json();
-      console.log(result);
-      if (result.status === 'success') {
+
+      // Check if the response was successful
+      if (!response.ok) {
+        console.error("Failed to add appointment", result); // Log the result to the console
+        alert(`Error: ${result.message}`);
+      } else {
+        console.log("Appointment booked successfully:", result);
         setSuccess(true);
         // Reset the form data after successful submission
         setFormData({ name: '', email: '', appointment_date: '', time_slot: '' });
-      } else {
-        alert('Error: ' + result.message);
       }
     } catch (error) {
-      console.error('Submission error:', error);
-      alert('Error: ' + error.message);
+      console.error('API request error:', error); // Log the error to the console
+      alert('An error occurred while submitting the form.');
     }
     setLoading(false);
   };
@@ -98,26 +100,26 @@ export default function Home() {
               <label htmlFor="time_slot">Time Slot</label>
               <select
                 className="slide-in"
-  id="time_slot"
-  name="time_slot"
-  value={formData.time_slot}
-  onChange={handleChange}
-  required
->
-  <option value="">Select a time...</option>
-  <option value="09:00">09:00 AM</option>
-  <option value="10:00">10:00 AM</option>
-  <option value="11:00">11:00 AM</option>
-  <option value="12:00">12:00 PM</option>
-  <option value="13:00">01:00 PM</option>
-  <option value="14:00">02:00 PM</option>
-  <option value="15:00">03:00 PM</option>
-  <option value="16:00">04:00 PM</option>
-  <option value="17:00">05:00 PM</option>
-  <option value="18:00">06:00 PM</option>
-  <option value="19:00">07:00 PM</option>
-  <option value="20:00">08:00 PM</option>
-</select>
+                id="time_slot"
+                name="time_slot"
+                value={formData.time_slot}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Select a time...</option>
+                <option value="09:00">09:00 AM</option>
+                <option value="10:00">10:00 AM</option>
+                <option value="11:00">11:00 AM</option>
+                <option value="12:00">12:00 PM</option>
+                <option value="13:00">01:00 PM</option>
+                <option value="14:00">02:00 PM</option>
+                <option value="15:00">03:00 PM</option>
+                <option value="16:00">04:00 PM</option>
+                <option value="17:00">05:00 PM</option>
+                <option value="18:00">06:00 PM</option>
+                <option value="19:00">07:00 PM</option>
+                <option value="20:00">08:00 PM</option>
+              </select>
             </div>
             <button type="submit">
               {loading ? 'Booking...' : 'Book Appointment'}
