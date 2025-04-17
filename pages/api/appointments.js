@@ -15,7 +15,9 @@ export default async function handler(req, res) {
   let credentials;
   try {
     const base64 = process.env.GOOGLE_SERVICE_ACCOUNT_CREDENTIALS;
-    if (!base64) throw new Error('Missing credentials');
+    if (!base64) {
+      throw new Error('Missing credentials environment variable');
+    }
 
     const jsonString = Buffer.from(base64, 'base64').toString('utf-8');
     credentials = JSON.parse(jsonString);
