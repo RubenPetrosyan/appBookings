@@ -1,30 +1,29 @@
 import { useState } from 'react';
 
-const AppointmentForm = () => {
+export default function Home() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    appointment_date: '',
-    time_slot: '',
+    appointmentDate: '',
+    timeSlot: '',
   });
 
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
-  // Handle form field changes
+  // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    setFormData({ ...formData, [name]: value });
   };
 
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setSuccess(false);
+    setErrorMessage('');
+    setSuccessMessage('');
 
     try {
       const response = await fetch('/api/appointments', {
@@ -35,39 +34,31 @@ const AppointmentForm = () => {
 
       const result = await response.json();
 
-      // Check if the response was successful
       if (!response.ok) {
-        console.error("Failed to add appointment", result); // Log the result to the console
-        alert(`Error: ${result.message}`);
+        setErrorMessage(`Error: ${result.message || 'Failed to add appointment'}`);
       } else {
-        console.log("Appointment booked successfully:", result);
-        setSuccess(true);
-
-        // Reset the form data after successful submission
+        setSuccessMessage('Appointment added successfully!');
         setFormData({
           name: '',
           email: '',
-          appointment_date: '',
-          time_slot: '',
+          appointmentDate: '',
+          timeSlot: '',
         });
       }
     } catch (error) {
-      console.error('API request error:', error); // Log the error to the console
-      alert('An error occurred while submitting the form.');
+      console.error('Error occurred:', error);
+      setErrorMessage('Failed to add appointment due to an error.');
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
     <div className="container">
       <h1>Book an Appointment</h1>
 
-      {success && (
-        <div className="modal">
-          <p>Your appointment has been successfully booked!</p>
-        </div>
-      )}
+      {successMessage && <div className="success">{successMessage}</div>}
+      {errorMessage && <div className="error">{errorMessage}</div>}
 
       <form onSubmit={handleSubmit}>
         <div className="form-group">
@@ -95,46 +86,38 @@ const AppointmentForm = () => {
         </div>
 
         <div className="form-group">
-          <label htmlFor="appointment_date">Appointment Date</label>
+          <label htmlFor="appointmentDate">Appointment Date</label>
           <input
             type="date"
-            id="appointment_date"
-            name="appointment_date"
-            value={formData.appointment_date}
+            id="appointmentDate"
+            name="appointmentDate"
+            value={formData.appointmentDate}
             onChange={handleChange}
             required
           />
         </div>
 
         <div className="form-group">
-          <label htmlFor="time_slot">Time Slot</label>
+          <label htmlFor="timeSlot">Time Slot</label>
           <select
-            id="time_slot"
-            name="time_slot"
-            value={formData.time_slot}
+            id="timeSlot"
+            name="timeSlot"
+            value={formData.timeSlot}
             onChange={handleChange}
             required
           >
-            <option value="">Select Time Slot</option>
+            <option value="">Select a time slot</option>
             <option value="9:00 AM - 10:00 AM">9:00 AM - 10:00 AM</option>
             <option value="10:00 AM - 11:00 AM">10:00 AM - 11:00 AM</option>
             <option value="11:00 AM - 12:00 PM">11:00 AM - 12:00 PM</option>
-            <option value="12:00 PM - 1:00 PM">12:00 PM - 1:00 PM</option>
-            <option value="1:00 PM - 2:00 PM">1:00 PM - 2:00 PM</option>
-            <option value="2:00 PM - 3:00 PM">2:00 PM - 3:00 PM</option>
-            <option value="3:00 PM - 4:00 PM">3:00 PM - 4:00 PM</option>
-            <option value="4:00 PM - 5:00 PM">4:00 PM - 5:00 PM</option>
+            {/* Add more time slots as needed */}
           </select>
         </div>
 
-        <div className="form-group">
-          <button type="submit" disabled={loading}>
-            {loading ? 'Booking...' : 'Book Appointment'}
-          </button>
-        </div>
+        <button type="submit" disabled={loading}>
+          {loading ? 'Submitting...' : 'Submit'}
+        </button>
       </form>
     </div>
   );
-};
-
-export default AppointmentForm;
+}
