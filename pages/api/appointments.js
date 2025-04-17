@@ -1,4 +1,3 @@
-// pages/api/appointments.js
 import { google } from 'googleapis';
 
 export default async function handler(req, res) {
@@ -33,7 +32,7 @@ export default async function handler(req, res) {
   try {
     const sheets = google.sheets({ version: 'v4', auth: await auth.getClient() });
 
-    const spreadsheetId = '1OOIUl8LYO0V8SxMjAyztiTbtxirIhS5ImwsAf_6Nc'; // your actual Sheet ID
+    const spreadsheetId = '1OOIUl8LYO0V8SxMjAyztiTbtxirIhS5ImwsAf_6Nc'; // Your actual sheet ID
     const sheetName = 'Sheet1';
 
     const appointmentId = `APPT-${Date.now()}`;
