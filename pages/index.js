@@ -253,7 +253,7 @@ export default function Home() {
 
         /* Improved placeholder text color */
         input::placeholder, select::placeholder {
-          color: #ffffff;  /* Light color for contrast */
+          color: #ffffff;  /* White color for placeholders */
           opacity: 0.7;     /* Slight transparency for the placeholder */
         }
 
