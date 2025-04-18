@@ -1,44 +1,49 @@
-/* styles/global.css */
-
-/* Reset some default browser styles */
+/* Global Reset */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Base body styles */
+/* Body Styling */
 body {
   font-family: 'Roboto', sans-serif;
-  background: #f4f4f4;
+  background-color: #f7f8fc;
   color: #333;
-  line-height: 1.6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
-/* Container for the app content */
+/* Container Styling */
 .container {
-  max-width: 420px;
-  margin: 40px auto;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
   padding: 30px;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 500px;
+  animation: fadeIn 1s ease-in-out;
 }
 
-/* Heading styles */
-h1 {
+/* Header Styling */
+.heading {
   text-align: center;
-  margin-bottom: 25px;
   color: #2575fc;
-  font-weight: 500;
+  font-size: 32px;
+  margin-bottom: 20px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  animation: slideIn 1.5s ease-out;
 }
 
-/* Styling form groups */
-.form-group {
+/* Form Group Styling */
+.formGroup {
   margin-bottom: 20px;
 }
 
-/* Label styling */
+/* Label Styling */
 label {
   display: block;
   font-weight: 500;
@@ -46,9 +51,8 @@ label {
   color: #555;
 }
 
-/* Input and select element styling */
-input, 
-select {
+/* Input and Select Styling */
+.input {
   width: 100%;
   padding: 12px;
   font-size: 16px;
@@ -58,18 +62,17 @@ select {
   transition: border-color 0.3s ease;
 }
 
-input:focus, 
-select:focus {
+.input:focus {
   border-color: #2575fc;
 }
 
-/* Button styling */
-button {
+/* Submit Button Styling */
+.submitButton {
   width: 100%;
   padding: 12px;
-  background: #2575fc;
+  background-color: #2575fc;
   border: none;
-  color: #fff;
+  color: white;
   font-size: 18px;
   font-weight: 500;
   border-radius: 6px;
@@ -77,17 +80,38 @@ button {
   transition: background 0.3s, transform 0.2s;
 }
 
-button:hover {
-  background: #1a5bb8;
+.submitButton:hover {
+  background-color: #1a5bb8;
   transform: translateY(-2px);
 }
 
-/* Modal styling */
-.modal {
+/* Status Message Styling */
+.statusMessage {
   margin-top: 20px;
-  padding: 20px;
-  background: #f0f0f0;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+  padding: 10px;
   text-align: center;
+  background-color: #e4f9ff;
+  color: #2575fc;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* Keyframe Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-20px);
+  }
+  to {
+    transform: translateY(0);
+  }
 }
