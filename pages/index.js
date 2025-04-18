@@ -20,11 +20,13 @@ export default function Home() {
     return new Date(`${today.getFullYear()}-${date}`);
   });
 
-  // Generate time slots for working hours
+  // Generate time slots for working hours (9 AM to 7 PM) in 15-minute intervals
   const timeSlots = [];
   for (let hour = 9; hour <= 19; hour++) {
-    let hourString = `${hour}:00`;
-    timeSlots.push(hourString);
+    for (let minutes = 0; minutes < 60; minutes += 15) {
+      let hourString = `${hour}:${minutes < 10 ? '0' + minutes : minutes}`;
+      timeSlots.push(hourString);
+    }
   }
 
   // Handle form input changes
