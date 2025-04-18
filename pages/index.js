@@ -15,7 +15,10 @@ export default function Home() {
   // Special dates to disable (format: MM-DD)
   const specialDates = ['12-25', '01-01'];  // Christmas and New Year
   const today = new Date();
-  const holidays = specialDates.map((date) => new Date(`${today.getFullYear()}-${date}`));
+  const holidays = specialDates.map((date) => {
+    // Create a Date object for the holiday in the current year
+    return new Date(`${today.getFullYear()}-${date}`);
+  });
 
   // Generate time slots for working hours
   const timeSlots = [];
@@ -56,11 +59,17 @@ export default function Home() {
     setLoading(false);
   };
 
-  // Disable weekends and special dates
-  const isWeekendOrHoliday = (date) => {
-    const day = new Date(date).getDay();
-    const formattedDate = `${date.getMonth() + 1}-${date.getDate()}`;
-    return day === 0 || day === 6 || holidays.some((holiday) => holiday.toDateString() === new Date(date).toDateString()) || formattedDate === today.toLocaleDateString();
+  // Convert string to Date object to check weekends and holidays
+  const isWeekendOrHoliday = (dateString) => {
+    const date = new Date(dateString); // Convert string to Date
+    const day = date.getDay();
+    const formattedDate = `${date.getMonth() + 1}-${date.getDate()}`; // MM-DD format
+    return (
+      day === 0 || // Sunday
+      day === 6 || // Saturday
+      holidays.some((holiday) => holiday.toDateString() === date.toDateString()) || // Special holidays
+      formattedDate === today.toLocaleDateString().slice(0, 5) // Disable today's date
+    );
   };
 
   return (
