@@ -251,6 +251,12 @@ export default function Home() {
           font-size: 16px;
         }
 
+        /* Improved placeholder text color */
+        input::placeholder, select::placeholder {
+          color: #ffffff;  /* Light color for contrast */
+          opacity: 0.7;     /* Slight transparency for the placeholder */
+        }
+
         /* Mouse movement effect */
         .move-effect {
           transition: transform 0.2s ease-out;
