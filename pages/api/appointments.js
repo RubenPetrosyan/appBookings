@@ -1,56 +1,66 @@
+// pages/api/appointments.js
 import { google } from 'googleapis';
 
-// Handler for the /api/appointments endpoint
 export default async function handler(req, res) {
-  if (req.method === 'POST') {
-    const { name, email, appointmentDate, timeSlot } = req.body;
+  if (req.method !== 'POST') {
+    return res.status(405).json({ status: 'error', message: 'Method not allowed' });
+  }
 
-    console.log('Received appointment data:', { name, email, appointmentDate, timeSlot });
+  // Parse request body
+  const { name, email, appointment_date, time_slot } = req.body;
+  if (!name || !email || !appointment_date || !time_slot) {
+    return res.status(400).json({ status: 'error', message: 'Missing required fields' });
+  }
 
-    try {
-      console.log('Initializing Google Auth...');
-      const auth = new google.auth.GoogleAuth({
-        credentials: JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_CREDENTIALS),
-        scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-      });
+  // Decode base64 credentials from env
+  let credentials;
+  try {
+    const base64 = process.env.GOOGLE_SERVICE_ACCOUNT_CREDENTIALS_BASE64;
+    if (!base64) throw new Error('Missing base64 credentials');
 
-      console.log('GoogleAuth initialized successfully.');
+    const jsonString = Buffer.from(base64, 'base64').toString('utf-8');
+    credentials = JSON.parse(jsonString);
+  } catch (err) {
+    console.error('Failed to decode credentials:', err.message);
+    return res.status(500).json({ status: 'error', message: 'Invalid credentials format' });
+  }
 
-      const sheets = google.sheets({ version: 'v4', auth });
+  const auth = new google.auth.GoogleAuth({
+    credentials,
+    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+  });
 
-      const spreadsheetId = '1OOIUl8B8LYO0V8SxMjAyztiTbtxirIhS5ImwsAf_6Nc'; // Correct spreadsheet ID
-      const range = 'Appointments!A2:D'; // Ensure this is the correct range
+  try {
+    const sheets = google.sheets({ version: 'v4', auth: await auth.getClient() });
 
-      console.log(`Appending data to spreadsheet with ID: ${spreadsheetId}, range: ${range}`);
-      
-      const resource = {
-        values: [
-          [name, email, appointmentDate, timeSlot],
-        ],
-      };
+    const spreadsheetId = '1OOIUl8LYO0V8SxMjAyztiTbtxirIhS5ImwsAf_6Nc'; // your actual Sheet ID
+    const sheetName = 'Sheet1';
 
-      console.log('Sending request to Google Sheets API...');
-      const response = await sheets.spreadsheets.values.append({
-        spreadsheetId,
-        range,
-        valueInputOption: 'RAW',
-        resource,
-      });
+    const appointmentId = `APPT-${Date.now()}`;
+    const timestamp = new Date().toISOString();
 
-      console.log('Appointment added successfully:', response);
-      
-      res.status(200).json({ status: 'success', message: 'Appointment added successfully!' });
-    } catch (error) {
-      console.error('Error while adding appointment:', error);
-      
-      if (error.response) {
-        console.error('Google API Response:', error.response.data);
-      }
+    const row = [
+      appointmentId,
+      name,
+      email,
+      appointment_date,
+      time_slot,
+      'Pending',
+      timestamp,
+    ];
 
-      res.status(500).json({ status: 'error', message: 'Failed to add appointment', error: error.message });
-    }
-  } else {
-    console.log(`Method ${req.method} not allowed for this endpoint`);
-    res.status(405).json({ status: 'error', message: 'Method not allowed' });
+    await sheets.spreadsheets.values.append({
+      spreadsheetId,
+      range: `${sheetName}!A:G`,
+      valueInputOption: 'USER_ENTERED',
+      requestBody: {
+        values: [row],
+      },
+    });
+
+    return res.status(200).json({ status: 'success', appointmentId });
+  } catch (error) {
+    console.error('Google Sheets Error:', error);
+    return res.status(500).json({ status: 'error', message: error.message });
   }
 }

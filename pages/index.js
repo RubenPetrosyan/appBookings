@@ -1,4 +1,4 @@
-import Head from 'next/head'
+import Head from 'next/head';
 import { useState } from 'react';
 
 export default function Home() {
@@ -102,7 +102,10 @@ export default function Home() {
                 required
               >
                 <option value="">Select a time...</option>
-                {/* Time slot options */}
+                <option value="9:00 AM">9:00 AM</option>
+                <option value="10:00 AM">10:00 AM</option>
+                <option value="11:00 AM">11:00 AM</option>
+                {/* Add more time options here */}
               </select>
             </div>
             <button type="submit" disabled={loading}>
@@ -112,7 +115,12 @@ export default function Home() {
           {success && (
             <div id="successModal" className="modal">
               <p>Thank you! Your appointment has been booked.</p>
-              <button onClick={() => setSuccess(false)}>Close</button>
+              <button onClick={() => {
+                setSuccess(false);
+                setFormData({ name: '', email: '', appointment_date: '', time_slot: '' }); // Clear form when closing success modal
+              }}>
+                Close
+              </button>
             </div>
           )}
           {error && (
@@ -123,14 +131,40 @@ export default function Home() {
         </div>
       </main>
       <style jsx>{`
-        /* Your styling remains here... */
         .error-modal {
           margin-top: 20px;
-          padding: 10px;
+          padding: 15px;
           background-color: #f8d7da;
           border: 1px solid #f5c6cb;
           color: #721c24;
           text-align: center;
+          border-radius: 5px;
+          animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal {
+          margin-top: 20px;
+          padding: 15px;
+          background-color: #d4edda;
+          border: 1px solid #c3e6cb;
+          color: #155724;
+          text-align: center;
+          border-radius: 5px;
+          animation: fadeIn 0.3s ease-out;
+        }
+
+        button:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
         }
       `}</style>
     </>

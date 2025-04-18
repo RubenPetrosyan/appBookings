@@ -1,49 +1,44 @@
-/* Global Reset */
+/* styles/global.css */
+
+/* Reset some default browser styles */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Body Styling */
+/* Base body styles */
 body {
   font-family: 'Roboto', sans-serif;
-  background-color: #f7f8fc;
+  background: #f4f4f4;
   color: #333;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+  line-height: 1.6;
 }
 
-/* Container Styling */
+/* Container for the app content */
 .container {
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  max-width: 420px;
+  margin: 40px auto;
   padding: 30px;
-  width: 100%;
-  max-width: 500px;
-  animation: fadeIn 1s ease-in-out;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
 }
 
-/* Header Styling */
-.heading {
+/* Heading styles */
+h1 {
   text-align: center;
+  margin-bottom: 25px;
   color: #2575fc;
-  font-size: 32px;
-  margin-bottom: 20px;
-  font-weight: 600;
-  letter-spacing: 1px;
-  animation: slideIn 1.5s ease-out;
+  font-weight: 500;
 }
 
-/* Form Group Styling */
-.formGroup {
+/* Styling form groups */
+.form-group {
   margin-bottom: 20px;
 }
 
-/* Label Styling */
+/* Label styling */
 label {
   display: block;
   font-weight: 500;
@@ -51,8 +46,9 @@ label {
   color: #555;
 }
 
-/* Input and Select Styling */
-.input {
+/* Input and select element styling */
+input, 
+select {
   width: 100%;
   padding: 12px;
   font-size: 16px;
@@ -62,17 +58,18 @@ label {
   transition: border-color 0.3s ease;
 }
 
-.input:focus {
+input:focus, 
+select:focus {
   border-color: #2575fc;
 }
 
-/* Submit Button Styling */
-.submitButton {
+/* Button styling */
+button {
   width: 100%;
   padding: 12px;
-  background-color: #2575fc;
+  background: #2575fc;
   border: none;
-  color: white;
+  color: #fff;
   font-size: 18px;
   font-weight: 500;
   border-radius: 6px;
@@ -80,38 +77,17 @@ label {
   transition: background 0.3s, transform 0.2s;
 }
 
-.submitButton:hover {
-  background-color: #1a5bb8;
+button:hover {
+  background: #1a5bb8;
   transform: translateY(-2px);
 }
 
-/* Status Message Styling */
-.statusMessage {
+/* Modal styling */
+.modal {
   margin-top: 20px;
-  padding: 10px;
-  text-align: center;
-  background-color: #e4f9ff;
-  color: #2575fc;
+  padding: 20px;
+  background: #f0f0f0;
+  border: 1px solid #ccc;
   border-radius: 6px;
-  font-size: 16px;
-  font-weight: 600;
-}
-
-/* Keyframe Animations */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes slideIn {
-  from {
-    transform: translateY(-20px);
-  }
-  to {
-    transform: translateY(0);
-  }
+  text-align: center;
 }
