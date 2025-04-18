@@ -1,118 +1,138 @@
+import Head from 'next/head'
 import { useState } from 'react';
-import './styles/global.css';
 
 export default function Home() {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [appointmentDate, setAppointmentDate] = useState('');
-  const [timeSlot, setTimeSlot] = useState('');
-  const [statusMessage, setStatusMessage] = useState('');
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    appointment_date: '',
+    time_slot: ''
+  });
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState(null); // Add error state
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
-    const formData = {
-      name,
-      email,
-      appointmentDate,
-      timeSlot,
-    };
-
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setSuccess(false);
+    setError(null); // Clear previous error
     try {
-      console.log('Form Data:', formData);
-
       const response = await fetch('/api/appointments', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(formData)
       });
-      
       const result = await response.json();
-      
-      if (response.ok) {
-        setStatusMessage('Appointment successfully booked!');
-        setName('');
-        setEmail('');
-        setAppointmentDate('');
-        setTimeSlot('');
+      console.log(result);
+      if (result.status === 'success') {
+        setSuccess(true);
+        setFormData({ name: '', email: '', appointment_date: '', time_slot: '' });
       } else {
-        setStatusMessage(`Error: ${result.message}`);
+        setError(result.message); // Set error message to state
       }
     } catch (error) {
-      console.error('Error during API request:', error);
-      setStatusMessage('Failed to book appointment. Please try again.');
+      console.error('Submission error:', error);
+      setError(error.message); // Set the error message
     }
+    setLoading(false);
   };
 
   return (
-    <div className={styles.container}>
-      <h1 className={styles.heading}>Book Your Appointment</h1>
-      <form className={styles.form} onSubmit={handleSubmit}>
-        <div className={styles.formGroup}>
-          <label htmlFor="name">Name</label>
-          <input 
-            type="text" 
-            id="name" 
-            name="name" 
-            value={name} 
-            onChange={(e) => setName(e.target.value)} 
-            required 
-            className={styles.input} 
-          />
+    <>
+      <Head>
+        <title>Book Your Appointment</title>
+        <meta name="description" content="Book your appointment easily" />
+        <link rel="icon" href="/AppBooking.ico" />
+      </Head>
+      <main>
+        <div className="container" id="appointment-container">
+          <h1>Book Your Appointment</h1>
+          <form id="appointment-form" onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label htmlFor="name">Name</label>
+              <input
+                className="slide-in"
+                type="text"
+                id="name"
+                name="name"
+                placeholder="Your name"
+                value={formData.name}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="email">Email</label>
+              <input
+                className="slide-in"
+                type="email"
+                id="email"
+                name="email"
+                placeholder="Your email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="appointment_date">Appointment Date</label>
+              <input
+                className="slide-in"
+                type="date"
+                id="appointment_date"
+                name="appointment_date"
+                value={formData.appointment_date}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="time_slot">Time Slot</label>
+              <select
+                className="slide-in"
+                id="time_slot"
+                name="time_slot"
+                value={formData.time_slot}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Select a time...</option>
+                {/* Time slot options */}
+              </select>
+            </div>
+            <button type="submit" disabled={loading}>
+              {loading ? 'Booking...' : 'Book Appointment'}
+            </button>
+          </form>
+          {success && (
+            <div id="successModal" className="modal">
+              <p>Thank you! Your appointment has been booked.</p>
+              <button onClick={() => setSuccess(false)}>Close</button>
+            </div>
+          )}
+          {error && (
+            <div className="error-modal">
+              <p>{error}</p>
+            </div>
+          )}
         </div>
-        
-        <div className={styles.formGroup}>
-          <label htmlFor="email">Email</label>
-          <input 
-            type="email" 
-            id="email" 
-            name="email" 
-            value={email} 
-            onChange={(e) => setEmail(e.target.value)} 
-            required 
-            className={styles.input} 
-          />
-        </div>
-
-        <div className={styles.formGroup}>
-          <label htmlFor="appointmentDate">Appointment Date</label>
-          <input 
-            type="date" 
-            id="appointmentDate" 
-            name="appointmentDate" 
-            value={appointmentDate} 
-            onChange={(e) => setAppointmentDate(e.target.value)} 
-            required 
-            className={styles.input} 
-          />
-        </div>
-
-        <div className={styles.formGroup}>
-          <label htmlFor="timeSlot">Time Slot</label>
-          <select 
-            id="timeSlot" 
-            name="timeSlot" 
-            value={timeSlot} 
-            onChange={(e) => setTimeSlot(e.target.value)} 
-            required 
-            className={styles.input}
-          >
-            <option value="">Select Time Slot</option>
-            <option value="9:00 AM - 10:00 AM">9:00 AM - 10:00 AM</option>
-            <option value="10:00 AM - 11:00 AM">10:00 AM - 11:00 AM</option>
-            <option value="11:00 AM - 12:00 PM">11:00 AM - 12:00 PM</option>
-            <option value="12:00 PM - 1:00 PM">12:00 PM - 1:00 PM</option>
-          </select>
-        </div>
-
-        <button type="submit" className={styles.submitButton}>Book Appointment</button>
-      </form>
-
-      {statusMessage && (
-        <div className={styles.statusMessage}>
-          <p>{statusMessage}</p>
-        </div>
-      )}
-    </div>
+      </main>
+      <style jsx>{`
+        /* Your styling remains here... */
+        .error-modal {
+          margin-top: 20px;
+          padding: 10px;
+          background-color: #f8d7da;
+          border: 1px solid #f5c6cb;
+          color: #721c24;
+          text-align: center;
+        }
+      `}</style>
+    </>
   );
 }
