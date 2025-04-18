@@ -10,8 +10,8 @@
 /* Base body styles */
 body {
   font-family: 'Roboto', sans-serif;
-  background: #f4f4f4;
-  color: #333;
+  background: linear-gradient(135deg, #6a11cb, #2575fc); /* Beautiful gradient background */
+  color: #f4f4f4;
   line-height: 1.6;
 }
 
@@ -20,17 +20,20 @@ body {
   max-width: 420px;
   margin: 40px auto;
   padding: 30px;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  background: rgba(0, 0, 0, 0.6); /* Dark background with some transparency */
+  border-radius: 15px;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px); /* Adds a nice frosted effect to the background */
 }
 
 /* Heading styles */
 h1 {
   text-align: center;
   margin-bottom: 25px;
-  color: #2575fc;
-  font-weight: 500;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 2.5rem;
+  letter-spacing: 1px;
 }
 
 /* Styling form groups */
@@ -43,7 +46,7 @@ label {
   display: block;
   font-weight: 500;
   margin-bottom: 8px;
-  color: #555;
+  color: #e0e0e0;
 }
 
 /* Input and select element styling */
@@ -53,14 +56,23 @@ select {
   padding: 12px;
   font-size: 16px;
   border: 1px solid #ccc;
-  border-radius: 6px;
+  border-radius: 8px;
   outline: none;
-  transition: border-color 0.3s ease;
+  background: #333;
+  color: #f4f4f4;
+  transition: border-color 0.3s ease, background-color 0.3s ease;
 }
 
 input:focus, 
 select:focus {
-  border-color: #2575fc;
+  border-color: #2575fc;  /* Blue focus effect */
+  background-color: #444; /* Slightly lighter background when focused */
+}
+
+input::placeholder, 
+select::placeholder {
+  color: #f4f4f4;  /* White color for placeholders */
+  opacity: 0.6;     /* Slight transparency for better readability */
 }
 
 /* Button styling */
@@ -72,9 +84,10 @@ button {
   color: #fff;
   font-size: 18px;
   font-weight: 500;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background 0.3s, transform 0.2s;
+  transition: background-color 0.3s, transform 0.2s;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add shadow for depth */
 }
 
 button:hover {
@@ -83,11 +96,32 @@ button:hover {
 }
 
 /* Modal styling */
-.modal {
+.modal, .error-modal {
   margin-top: 20px;
   padding: 20px;
-  background: #f0f0f0;
+  background: rgba(0, 0, 0, 0.7);
   border: 1px solid #ccc;
   border-radius: 6px;
+  color: #fff;
   text-align: center;
+}
+
+.modal {
+  background-color: #2f8a3b;  /* Green success message */
+}
+
+.error-modal {
+  background-color: #c62e2e;  /* Red error message */
+}
+
+/* Responsive styling */
+@media (max-width: 600px) {
+  .container {
+    width: 90%;
+    padding: 15px;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
 }
