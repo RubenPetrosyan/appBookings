@@ -29,8 +29,12 @@ export default async function handler(req, res) {
   try {
     const sheets = google.sheets({ version: 'v4', auth: await auth.getClient() });
 
-    const spreadsheetId = '1OOIUl8LYO0V8SxMjAyztiTbtxirIhS5ImwsAf_6Nc'; // your actual Sheet ID
-    const sheetName = 'Sheet1';
+    const spreadsheetId = '1OOIUl8B8LYO0V8SxMjAyztiTbtxirIhS5ImwsAf_6Nc'; // your actual Sheet ID
+    const sheetName = 'Sheet1';  // Ensure this matches the actual sheet name
+
+    // Debugging logs to check the spreadsheet ID and sheet name
+    console.log('Google Sheets API URL:', `https://docs.google.com/spreadsheets/d/${spreadsheetId}/edit`);
+    console.log('Sheet Name:', sheetName);
 
     const appointmentId = `APPT-${Date.now()}`;
     const timestamp = new Date().toISOString();
@@ -47,7 +51,7 @@ export default async function handler(req, res) {
 
     await sheets.spreadsheets.values.append({
       spreadsheetId,
-      range: `${sheetName}!A:G`,
+      range: `${sheetName}!A:G`,  // Ensure the range is correct for your sheet
       valueInputOption: 'USER_ENTERED',
       requestBody: {
         values: [row],
