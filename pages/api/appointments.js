@@ -12,16 +12,12 @@ export default async function handler(req, res) {
     return res.status(400).json({ status: 'error', message: 'Missing required fields' });
   }
 
-  // Decode base64 credentials from env
+  // Decode credentials from environment variable
   let credentials;
   try {
-    const base64 = process.env.GOOGLE_SERVICE_ACCOUNT_CREDENTIALS;
-    if (!base64) throw new Error('Missing base64 credentials');
-
-    const jsonString = Buffer.from(base64, 'base64').toString('utf-8');
-    credentials = JSON.parse(jsonString);
+    credentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_CREDENTIALS);
   } catch (err) {
-    console.error('Failed to decode credentials:', err.message);
+    console.error('Failed to parse credentials:', err.message);
     return res.status(500).json({ status: 'error', message: 'Invalid credentials format' });
   }
 
