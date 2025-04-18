@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function Home() {
   const [formData, setFormData] = useState({
@@ -72,6 +72,24 @@ export default function Home() {
     );
   };
 
+  // Mouse move effect (subtle movement)
+  const handleMouseMove = (e) => {
+    const { clientX: mouseX, clientY: mouseY } = e;
+    const elements = document.querySelectorAll('.move-effect');
+    elements.forEach((element) => {
+      const offsetX = (mouseX - window.innerWidth / 2) * 0.05;
+      const offsetY = (mouseY - window.innerHeight / 2) * 0.05;
+      element.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+    });
+  };
+
+  useEffect(() => {
+    document.addEventListener('mousemove', handleMouseMove);
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, []);
+
   return (
     <>
       <Head>
@@ -80,7 +98,7 @@ export default function Home() {
         <link rel="icon" href="/AppBooking.ico" />
       </Head>
       <main>
-        <div className="container" id="appointment-container">
+        <div className="container move-effect" id="appointment-container">
           <h1>Book Your Appointment</h1>
           <form id="appointment-form" onSubmit={handleSubmit}>
             <div className="form-group">
@@ -164,17 +182,19 @@ export default function Home() {
 
       <style jsx>{`
         body {
-          background: url('/background.jpg') no-repeat center center fixed;
-          background-size: cover;
+          background: linear-gradient(135deg, #2b2d42, #8d99ae);
+          color: white;
+          font-family: Arial, sans-serif;
         }
 
         .container {
           text-align: center;
           max-width: 600px;
           margin: 50px auto;
-          padding: 20px;
-          background: rgba(255, 255, 255, 0.8);
+          padding: 30px;
+          background: rgba(0, 0, 0, 0.7);
           border-radius: 10px;
+          box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3);
         }
 
         .form-group {
@@ -193,6 +213,7 @@ export default function Home() {
           background-color: #4CAF50;
           color: white;
           cursor: pointer;
+          transition: background-color 0.3s ease;
         }
 
         button:disabled {
@@ -219,22 +240,26 @@ export default function Home() {
           color: #721c24;
         }
 
+        .form-group label {
+          font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group select {
+          font-size: 16px;
+        }
+
+        /* Mouse movement effect */
+        .move-effect {
+          transition: transform 0.2s ease-out;
+        }
+
+        /* Responsive styling */
         @media (max-width: 600px) {
           .container {
             width: 90%;
-            padding: 10px;
+            padding: 15px;
           }
-        }
-
-        /* Chime hover effect */
-        .container:hover {
-          animation: chime 1s infinite;
-        }
-
-        @keyframes chime {
-          0% { transform: scale(1); }
-          50% { transform: scale(1.1); }
-          100% { transform: scale(1); }
         }
       `}</style>
     </>
